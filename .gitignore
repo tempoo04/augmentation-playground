@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+.env
+
+# Docker
+.docker/
+
+# Data — never commit images or label files
+datasets/
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.txt
+!requirements.txt
+
+# Outputs
+runs/
+mlruns/
+outputs/
+
+# OS
+.DS_Store
+Thumbs.db
