@@ -205,21 +205,27 @@ def run_augmentation(img: np.ndarray, params: AugParams, polygons: list) -> dict
 def draw_polygons(img: np.ndarray, polygons: list) -> np.ndarray:
     h, w = img.shape[:2]
     out = img.copy()
-    FILL  = (0, 200, 150)
-    LINE  = (0, 220, 160)
     WHITE = (255, 255, 255)
-    for poly in polygons:
+
+    # Spread hues evenly so adjacent polygons are visually distinct
+    n = max(len(polygons), 1)
+    for idx, poly in enumerate(polygons):
         if len(poly) < 3:
             continue
+        hue = int(idx * 180 / n)          # OpenCV hue: 0–179
+        hsv_fill = np.uint8([[[hue, 200, 200]]])
+        bgr = cv2.cvtColor(hsv_fill, cv2.COLOR_HSV2BGR)[0][0]
+        color = (int(bgr[0]), int(bgr[1]), int(bgr[2]))
+
         pts = np.array([[int(x * w), int(y * h)] for x, y in poly], dtype=np.int32)
         overlay = out.copy()
-        cv2.fillPoly(overlay, [pts], FILL)
-        cv2.addWeighted(overlay, 0.12, out, 0.88, 0, out)
+        cv2.fillPoly(overlay, [pts], color)
+        cv2.addWeighted(overlay, 0.15, out, 0.85, 0, out)
         cv2.polylines(out, [pts], isClosed=True, color=WHITE, thickness=4)
-        cv2.polylines(out, [pts], isClosed=True, color=LINE,  thickness=2)
+        cv2.polylines(out, [pts], isClosed=True, color=color,  thickness=2)
         for pt in pts:
             cv2.circle(out, tuple(pt), 5, WHITE, -1)
-            cv2.circle(out, tuple(pt), 3, LINE,  -1)
+            cv2.circle(out, tuple(pt), 3, color,  -1)
     return out
 
 
