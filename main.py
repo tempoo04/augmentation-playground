@@ -24,6 +24,16 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 # ─────────────────────────────────────────────────────────────
+#  Health check
+# ─────────────────────────────────────────────────────────────
+
+@app.get("/health")
+async def health():
+    """Liveness / readiness probe for Docker and container orchestrators."""
+    return {"status": "ok"}
+
+
+# ─────────────────────────────────────────────────────────────
 #  Models
 # ─────────────────────────────────────────────────────────────
 
